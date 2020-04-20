@@ -107,4 +107,11 @@
     where email = #{email,jdbcType=VARCHAR}
   </select>
 
+  <insert id="insertUser" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.User" useGeneratedKeys="true">
+    insert into user (`name`, email, `password`,
+      create_time, update_time)
+    values (#{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      now(), now()
+  </insert>
+
 </mapper>

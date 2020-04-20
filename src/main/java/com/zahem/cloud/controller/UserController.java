@@ -23,4 +23,17 @@ public class UserController {
         return response;
     }
 
+    /**
+     * 注册，根据输入的用户名，邮箱，密码
+     * @param Name
+     * @param Email
+     * @param Password
+     * @return
+     */
+    @RequestMapping("/register")
+    public AxiosResponse register(String Name,String Email,String Password){
+        AxiosResponse axiosResponse = userService.addUsers(Name, Email, Password);
+        return axiosResponse;
+    }
+
 }

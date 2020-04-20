@@ -3,6 +3,7 @@ package com.zahem.cloud.service.impl;
 import com.zahem.cloud.config.AxiosResponse;
 import com.zahem.cloud.config.CustomExprotion;
 import com.zahem.cloud.dao.RolesMapper;
+import com.zahem.cloud.dao.RolesUserMapper;
 import com.zahem.cloud.dao.UserMapper;
 import com.zahem.cloud.pojo.User;
 import com.zahem.cloud.service.IUserService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.beans.Transient;
 import java.util.UUID;
 
 @Service
@@ -23,6 +25,9 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private RolesMapper rolesMapper;
 
+    @Autowired
+    private RolesUserMapper rolesUserMapper;
+
     @Resource
     private RedisClient redisClient;
 
@@ -33,7 +38,8 @@ public class UserServiceImpl implements IUserService {
      * @param Password
      * @return
      */
-    public AxiosResponse login(String Email,String Password){
+    @Override
+    public AxiosResponse login(String Email, String Password){
         String md5Password = MD5Utils.md5Password(Password);
         int result = userMapper.selectByEmailAndPassword(Email, md5Password);
         if (result == 0){
@@ -52,6 +58,27 @@ public class UserServiceImpl implements IUserService {
         redisClient.set(random,"userRoles",userRoles);
 
         return AxiosResponse.success(random);
+    }
+
+    /**
+     * 注册用户，开启事务注解,密码加密存入数据库
+     * @param Name
+     * @param Email
+     * @param Password
+     * @return
+     */
+    @Override
+    @Transient
+    public AxiosResponse addUsers(String Name ,String Email,String Password){
+        String md5Password = MD5Utils.md5Password(Password);
+        int result = userMapper.insertUser(Name, Email, md5Password);
+        if (result == 0){
+            AxiosResponse.error(CustomExprotion.USER_INPUT_ERROR);
+        }
+        rolesUserMapper.addRolesUser();
+
+        return AxiosResponse.success();
+
     }
 
 

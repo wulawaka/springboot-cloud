@@ -21,4 +21,6 @@ public interface UserMapper {
     int selectByEmailAndPassword(@Param("Email")String Email,@Param("Password")String Password);
 
     User selectByEmail(String email);
+
+    int insertUser(@Param("Name")String Name,@Param("Email")String Email,@Param("Password")String Password);
 }

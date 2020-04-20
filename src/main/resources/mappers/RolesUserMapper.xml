@@ -60,4 +60,8 @@
       user_id = #{userId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <insert id="addRolesUser" parameterType="map">
+    INSERT INTO roles_user (ru_id,r_id,u_id) VALUES (null,2,LAST_INSERT_ID());
+  </insert>
 </mapper>
