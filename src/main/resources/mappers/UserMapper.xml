@@ -99,4 +99,12 @@
   <select id="selectByEmailAndPassword" resultType="int" parameterType="String">
     select count(1) from user where email=#{Email} and password=#{Password}
   </select>
+
+  <select id="selectByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where email = #{email,jdbcType=VARCHAR}
+  </select>
+
 </mapper>

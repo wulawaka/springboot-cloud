@@ -60,4 +60,8 @@
       name_zh = #{nameZh,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectUserRole" parameterType="int" resultType="String">
+    select r.name from roles r,roles_user ru where r.id=ru.roles_id and ru.user_id=#{userId}
+  </select>
 </mapper>
