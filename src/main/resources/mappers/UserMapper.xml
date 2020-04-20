@@ -111,7 +111,7 @@
     insert into user (`name`, email, `password`,
       create_time, update_time)
     values (#{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      now(), now()
+      now(), now())
   </insert>
 
 </mapper>

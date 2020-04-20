@@ -130,4 +130,26 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <insert id="insertFiles" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Category" useGeneratedKeys="true">
+    insert into category (parent_id, user_id, `name`,
+      `status`, `type`, sort_order,
+      create_time, update_time)
+    values (#{parentId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+      1, #{type,jdbcType=INTEGER}, 0,
+      now(), now())
+  </insert>
+
+  <insert id="insertFilesById" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Category" useGeneratedKeys="true">
+    insert into category (parent_id, user_id, `name`,
+      `status`, `type`, sort_order,
+      create_time, update_time)
+    values (0, #{userId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+      1, #{type,jdbcType=INTEGER}, 2,
+      now(), now())
+  </insert>
+
+  <select id="selectAllByUserIdAndParentId" parameterType="map" resultMap="BaseResultMap">
+    select * from category where user_id=#{userId} and parent_id=#{parntId}
+  </select>
 </mapper>

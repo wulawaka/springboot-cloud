@@ -1,7 +1,10 @@
 package com.zahem.cloud.dao;
 
 import com.zahem.cloud.pojo.Category;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface CategoryMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +17,10 @@ public interface CategoryMapper {
     int updateByPrimaryKeySelective(Category record);
 
     int updateByPrimaryKey(Category record);
+
+    int insertFiles(@Param("userId") int userId,@Param("Name")String Name,@Param("type")int type);
+
+    Category selectAllByUserIdAndParentId(@Param("userId")int userId,@Param("parentId")int parentId);
+
+    int insertFilesById(@Param("userId")int userId,@Param("Name")String Name,@Param("type")int type,@Param("parentId")int parentId);
 }

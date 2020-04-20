@@ -17,6 +17,12 @@ public class AxiosResponse {
         return response;
     }
 
+    public static AxiosResponse error(String msg){
+        AxiosResponse axiosResponse=new AxiosResponse();
+        axiosResponse.setMsg(msg);
+        return axiosResponse;
+    }
+
     public static AxiosResponse success(){
         AxiosResponse response=new AxiosResponse();
         response.setCode(200);
