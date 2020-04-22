@@ -18,15 +18,15 @@ public class CategoryServiceImpl implements ICategoryService {
     private RedisClient redisClient;
 
     /**
-     * 首先校验token，生成userId
-     * 从前端获取父节点，如果没有则默认为0（根节点），目的是显示当前目录的所有信息
-     * 如果获取上面的信息中的SortOrder为0说明是根节点，那就创建父节点为0的文件夹或其他的文件。
-     * 否则就获取前端点击的那个文件夹的id，并把其父节点变成从前端获取的id
      *
-     * @param token
+     * @param token 验证的token
+     * @param Name  新建文件的名字，如果type=0，并且没有名字则默认为“新建文件夹”
+     * @param type  类型，在数据库说明里
+     * @param parentId  从前端获取节点，如果没有则默认0根目录
      * @return
      */
-    public AxiosResponse addNewFiles(String token,String Name,int type,int parentId,int CategoryId){
+    @Override
+    public AxiosResponse addNewFiles(String token, String Name, int type, int parentId){
         //登录校验部分
         Boolean hasToken = redisClient.hasKey(token);
         if(hasToken == false){
@@ -34,16 +34,10 @@ public class CategoryServiceImpl implements ICategoryService {
         }
         //获得userId
         Object userId = redisClient.get(token, "userId");
-        //获取userid和父节点
-        Category category = categoryMapper.selectAllByUserIdAndParentId((Integer) userId, parentId);
-        //进行判断
-        if(category.getSortOrder() == 0){
-            int result=categoryMapper.insertFiles((Integer) userId,Name,type);
-        }else{
-            int result = categoryMapper.insertFilesById((Integer) userId, Name, type, CategoryId);
-            if (result == 0){
-                return AxiosResponse.error("创建出问题");
-            }
+
+        int result = categoryMapper.insertFilesById((Integer) userId, Name, type, parentId);
+        if (result == 0){
+            AxiosResponse.error("创建失败");
         }
         return AxiosResponse.success("创建成功");
     }
@@ -57,6 +51,7 @@ public class CategoryServiceImpl implements ICategoryService {
      * @param parentId
      * @return
      */
+    @Override
     public AxiosResponse selectAll(String token,int parentId){
         Boolean hasToken = redisClient.hasKey(token);
         if(hasToken == false){

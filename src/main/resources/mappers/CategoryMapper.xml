@@ -150,6 +150,6 @@
   </insert>
 
   <select id="selectAllByUserIdAndParentId" parameterType="map" resultMap="BaseResultMap">
-    select * from category where user_id=#{userId} and parent_id=#{parntId}
+    select * from category where user_id=#{userId} and parent_id=#{parentId}
   </select>
 </mapper>

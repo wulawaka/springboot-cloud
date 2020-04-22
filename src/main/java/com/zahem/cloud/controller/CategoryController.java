@@ -14,7 +14,7 @@ public class CategoryController {
     private ICategoryService categoryService;
 
     //查看所有文件
-    @RequestMapping("/list")
+    @RequestMapping("/all")
     public AxiosResponse selectAll(String token, @RequestParam(defaultValue = "0",value = "parentId")int parentId){
         AxiosResponse axiosResponse = categoryService.selectAll(token, parentId);
         return axiosResponse;
@@ -25,9 +25,8 @@ public class CategoryController {
     public AxiosResponse addFile(String token,
                                  @RequestParam(defaultValue = "新建文件夹") String Name,
                                  @RequestParam(defaultValue = "0") int type,
-                                 @RequestParam(defaultValue = "0",value = "parentId") int parentId,
-                                 int CategoryId){
-        AxiosResponse axiosResponse = categoryService.addNewFiles(token, Name, type, parentId, CategoryId);
+                                 @RequestParam(defaultValue = "0",value = "parentId") int parentId){
+        AxiosResponse axiosResponse = categoryService.addNewFiles(token, Name, type, parentId);
         return axiosResponse;
     }
 
