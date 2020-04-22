@@ -29,13 +29,18 @@ public class CategoryController {
         AxiosResponse axiosResponse = categoryService.addNewFiles(token, Name, type, parentId);
         return axiosResponse;
     }
-    //彻底删除垃圾箱内容
+    //删除标记废弃内容
     @RequestMapping("/delete")
     public AxiosResponse deleteFiles(String token,int id){
         AxiosResponse axiosResponse=categoryService.delete(token,id);
         return axiosResponse;
     }
 
-    public AxiosResponse
+    //标记废弃
+    @RequestMapping("/rubbish")
+    public AxiosResponse removeRubbish(String token,int id){
+        AxiosResponse axiosResponse=categoryService.remove(token, id);
+        return axiosResponse;
+    }
 
 }

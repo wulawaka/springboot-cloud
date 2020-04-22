@@ -83,6 +83,13 @@ public class CategoryServiceImpl implements ICategoryService {
         return AxiosResponse.success("删除成功");
     }
 
+    /**
+     * 标记废弃
+     * @param token 验证是否登录
+     * @param id    当前的id
+     * @return
+     */
+    @Override
     public AxiosResponse remove(String token,int id){
         //登录校验部分
         Boolean hasToken = redisClient.hasKey(token);
