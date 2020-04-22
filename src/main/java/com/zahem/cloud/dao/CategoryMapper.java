@@ -16,7 +16,7 @@ public interface CategoryMapper {
 
     int updateByPrimaryKeySelective(Category record);
 
-    int updateByPrimaryKeyAndUserId(@Param("userId")int userId,@Param("id")int id);
+    int updateByPrimaryKeyAndUserId(@Param("id")int id,@Param("userId")int userId);
 
     int insertFiles(@Param("userId") int userId,@Param("Name")String Name,@Param("type")int type);
 

@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements ICategoryService {
 
         int result = categoryMapper.insertFilesById((Integer) userId, Name, type, parentId);
         if (result == 0){
-            AxiosResponse.error("创建失败");
+            AxiosResponse.error(CustomExprotion.HANDLE_ERROR);
         }
         return AxiosResponse.success("创建成功");
     }
@@ -68,6 +68,7 @@ public class CategoryServiceImpl implements ICategoryService {
      * @param id    删除的id
      * @return
      */
+    @Override
     public AxiosResponse delete(String token,int id){
         //登录校验部分
         Boolean hasToken = redisClient.hasKey(token);
@@ -77,8 +78,25 @@ public class CategoryServiceImpl implements ICategoryService {
 
         int result = categoryMapper.deleteByPrimaryKey(id);
         if (result == 0){
-            AxiosResponse.error("删除出错");
+            AxiosResponse.error(CustomExprotion.HANDLE_ERROR);
         }
         return AxiosResponse.success("删除成功");
+    }
+
+    public AxiosResponse remove(String token,int id){
+        //登录校验部分
+        Boolean hasToken = redisClient.hasKey(token);
+        if(hasToken == false){
+            AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+        }
+
+        //获得userId
+        Object userId = redisClient.get(token, "userId");
+
+        int result = categoryMapper.updateByPrimaryKeyAndUserId(id, (Integer) userId);
+        if (result == 0){
+            AxiosResponse.error(CustomExprotion.HANDLE_ERROR);
+        }
+        return AxiosResponse.success("移入垃圾箱成功");
     }
 }
