@@ -23,7 +23,7 @@
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from category
-    where id = #{id,jdbcType=INTEGER} and type = 0
+    where id = #{id,jdbcType=INTEGER} and status = 0
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Category" useGeneratedKeys="true">
     insert into category (parent_id, user_id, `name`, 
@@ -118,17 +118,11 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.zahem.cloud.pojo.Category">
+  <update id="updateByPrimaryKeyAndUserId" parameterType="com.zahem.cloud.pojo.Category">
     update category
-    set parent_id = #{parentId,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER},
-      `name` = #{name,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=BIT},
-      `type` = #{type,jdbcType=INTEGER},
-      sort_order = #{sortOrder,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+    set`status` = 0,
+      update_time = now()
+    where id = #{id,jdbcType=INTEGER} and user_id=#{userId}
   </update>
 
   <insert id="insertFiles" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Category" useGeneratedKeys="true">
@@ -152,4 +146,5 @@
   <select id="selectAllByUserIdAndParentId" parameterType="map" resultMap="BaseResultMap">
     select * from category where user_id=#{userId} and parent_id=#{parentId}
   </select>
+
 </mapper>
