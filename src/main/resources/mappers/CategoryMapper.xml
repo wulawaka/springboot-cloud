@@ -23,7 +23,7 @@
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from category
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER} and type = 0
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Category" useGeneratedKeys="true">
     insert into category (parent_id, user_id, `name`, 

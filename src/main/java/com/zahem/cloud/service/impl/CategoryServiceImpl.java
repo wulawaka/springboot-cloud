@@ -61,4 +61,24 @@ public class CategoryServiceImpl implements ICategoryService {
         Category category = categoryMapper.selectAllByUserIdAndParentId((Integer) userId, parentId);
         return AxiosResponse.success(category);
     }
+
+    /**
+     * 彻底删除垃圾回收箱中的内容
+     * @param token 验证是否登录
+     * @param id    删除的id
+     * @return
+     */
+    public AxiosResponse delete(String token,int id){
+        //登录校验部分
+        Boolean hasToken = redisClient.hasKey(token);
+        if(hasToken == false){
+            AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+        }
+
+        int result = categoryMapper.deleteByPrimaryKey(id);
+        if (result == 0){
+            AxiosResponse.error("删除出错");
+        }
+        return AxiosResponse.success("删除成功");
+    }
 }
