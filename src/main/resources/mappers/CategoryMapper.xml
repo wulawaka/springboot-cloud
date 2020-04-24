@@ -30,8 +30,8 @@
       `status`, `type`, sort_order, 
       create_time, update_time)
     values (#{parentId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{status,jdbcType=BIT}, #{type,jdbcType=INTEGER}, #{sortOrder,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      1, #{type,jdbcType=INTEGER}, 1,
+      now(), now())
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Category" useGeneratedKeys="true">
     insert into category
@@ -146,5 +146,6 @@
   <select id="selectAllByUserIdAndParentId" parameterType="map" resultMap="BaseResultMap">
     select * from category where user_id=#{userId} and parent_id=#{parentId}
   </select>
+
 
 </mapper>

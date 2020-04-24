@@ -5,17 +5,28 @@ import com.zahem.cloud.config.CustomExprotion;
 import com.zahem.cloud.dao.CategoryMapper;
 import com.zahem.cloud.pojo.Category;
 import com.zahem.cloud.service.ICategoryService;
+import com.zahem.cloud.utils.FTPUtil;
 import com.zahem.cloud.utils.RedisClient;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
+
 @Service
+@Slf4j
 public class CategoryServiceImpl implements ICategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
     @Resource
     private RedisClient redisClient;
+    @Autowired
+    private FTPUtil ftpUtil;
 
     /**
      *
@@ -106,4 +117,59 @@ public class CategoryServiceImpl implements ICategoryService {
         }
         return AxiosResponse.success("移入垃圾箱成功");
     }
+
+    @Override
+    public AxiosResponse upload(MultipartFile file) throws IOException {
+        int type = 6;
+        InputStream inputStream=file.getInputStream();
+
+        String fileName=file.getOriginalFilename();
+
+        String suffix = fileName.substring(fileName.lastIndexOf(".")+1);
+        String prefix=fileName.substring(0,fileName.indexOf("."));
+        switch (suffix){
+            case "jpg":
+            case "png":
+                type=5;
+                break;
+            case "rmvb":
+            case "mp4":
+                type=3;
+                break;
+            case "mp3":
+            case "WAV":
+            case "MIDI":
+                type=1;
+                break;
+            case "txt":
+            case "md":
+                type=2;
+                break;
+            case "zip":
+            case "rar":
+            case "7z":
+                type=4;
+                break;
+        }
+
+        Category category=new Category();
+        category.setUserId(1);
+        category.setParentId(0);
+        category.setName(prefix);
+        category.setType(type);
+        int result = categoryMapper.insert(category);
+        if (result == 0){
+            return AxiosResponse.error(CustomExprotion.HANDLE_ERROR);
+        }
+//        String finalName=UUID.randomUUID().toString();
+
+        boolean flag = ftpUtil.upload(fileName,inputStream);
+        if (flag == false){
+            return AxiosResponse.error("上传失败");
+        }
+        return AxiosResponse.success("上传成功");
+    }
+
+
+
 }
