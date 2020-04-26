@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 
 @RestController
 public class CategoryController {
@@ -46,19 +50,29 @@ public class CategoryController {
         AxiosResponse axiosResponse=categoryService.remove(token, id);
         return axiosResponse;
     }
-
+    //上传
     @RequestMapping("/upload")
     public AxiosResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
         AxiosResponse upload = categoryService.upload(file);
         return upload;
     }
-
+    //下载
     @RequestMapping("/download")
-    public InputStream download(String fileName){
+    public AxiosResponse download(String fileName, HttpServletResponse response) throws IOException {
         InputStream download1 = categoryService.download(fileName);
-        System.out.println(download1);
 
-        return download1;
+        response.setContentType("application/octet-stream");
+        response.setHeader("content-disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8"));
+        int len = 0;
+        byte[] buffer = new byte[1024];
+        OutputStream out=response.getOutputStream();
+        while((len=download1.read(buffer))>0){
+            out.write(buffer,0,len);
+        }
+        download1.close();
+        out.close();
+
+        return AxiosResponse.success();
     }
 
 
