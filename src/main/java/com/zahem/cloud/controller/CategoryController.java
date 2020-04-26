@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 public class CategoryController {
@@ -50,6 +51,14 @@ public class CategoryController {
     public AxiosResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
         AxiosResponse upload = categoryService.upload(file);
         return upload;
+    }
+
+    @RequestMapping("/download")
+    public InputStream download(String fileName){
+        InputStream download1 = categoryService.download(fileName);
+        System.out.println(download1);
+
+        return download1;
     }
 
 

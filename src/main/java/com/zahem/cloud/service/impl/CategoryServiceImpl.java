@@ -8,14 +8,17 @@ import com.zahem.cloud.service.ICategoryService;
 import com.zahem.cloud.utils.FTPUtil;
 import com.zahem.cloud.utils.RedisClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.UUID;
 
 @Service
@@ -118,6 +121,12 @@ public class CategoryServiceImpl implements ICategoryService {
         return AxiosResponse.success("移入垃圾箱成功");
     }
 
+    /**
+     * 上传文件
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @Override
     public AxiosResponse upload(MultipartFile file) throws IOException {
         int type = 6;
@@ -168,6 +177,11 @@ public class CategoryServiceImpl implements ICategoryService {
             return AxiosResponse.error("上传失败");
         }
         return AxiosResponse.success("上传成功");
+    }
+    @Override
+    public InputStream download(String fileName){
+        InputStream inputStream = ftpUtil.downFile(fileName);
+        return inputStream;
     }
 
 
