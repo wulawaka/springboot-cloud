@@ -52,27 +52,28 @@ public class CategoryController {
     }
     //上传
     @RequestMapping("/upload")
-    public AxiosResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
-        AxiosResponse upload = categoryService.upload(file);
+    public AxiosResponse upload(@RequestParam("file") MultipartFile file,String token) throws IOException {
+        AxiosResponse upload = categoryService.upload(file,token);
         return upload;
     }
-    //下载
+
+    /**
+     * 下载文件
+     * @param fileName
+     * @param token
+     * @return
+     * @throws IOException
+     */
     @RequestMapping("/download")
-    public AxiosResponse download(String fileName, HttpServletResponse response) throws IOException {
-        InputStream download1 = categoryService.download(fileName);
-
-        response.setContentType("application/octet-stream");
-        response.setHeader("content-disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8"));
-        int len = 0;
-        byte[] buffer = new byte[1024];
-        OutputStream out=response.getOutputStream();
-        while((len=download1.read(buffer))>0){
-            out.write(buffer,0,len);
-        }
-        download1.close();
-        out.close();
-
+    public AxiosResponse download(String fileName, String token) throws IOException {
+        AxiosResponse download = categoryService.download(fileName, token);
         return AxiosResponse.success();
+    }
+
+    @RequestMapping("/test")
+    public AxiosResponse test(String token){
+        AxiosResponse axiosResponse=categoryService.test(token);
+        return axiosResponse;
     }
 
 

@@ -4,10 +4,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 @Component
 public class RedisClient {
     @Resource
     private RedisTemplate redisTemplate;
+
+    public static final long DEFAULT_EXPIRE=60*60*24;
 
     public boolean set(Object k,Object v){
        try {
@@ -51,5 +56,12 @@ public class RedisClient {
     //自增1
     public Long incr(Object k){
         return redisTemplate.opsForValue().increment(k);
+    }
+    //设置过期时间
+    public void expireAt(Object k , TimeUnit timeUnit){
+         redisTemplate.expire(k,DEFAULT_EXPIRE,timeUnit);
+    }
+    public long getKeyExpire(String key, TimeUnit timeUnit) {
+        return redisTemplate.getExpire(key, timeUnit);
     }
 }

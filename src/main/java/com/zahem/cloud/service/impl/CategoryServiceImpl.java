@@ -7,19 +7,19 @@ import com.zahem.cloud.pojo.Category;
 import com.zahem.cloud.service.ICategoryService;
 import com.zahem.cloud.utils.FTPUtil;
 import com.zahem.cloud.utils.RedisClient;
+import jdk.management.resource.internal.inst.DatagramDispatcherRMHooks;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.UUID;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements ICategoryService {
         //登录校验部分
         Boolean hasToken = redisClient.hasKey(token);
         if(hasToken == false){
-            AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
         }
         //获得userId
         Object userId = redisClient.get(token, "userId");
@@ -69,7 +69,7 @@ public class CategoryServiceImpl implements ICategoryService {
     public AxiosResponse selectAll(String token,int parentId){
         Boolean hasToken = redisClient.hasKey(token);
         if(hasToken == false){
-            AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
         }
         Object userId = redisClient.get(token, "userId");
         Category category = categoryMapper.selectAllByUserIdAndParentId((Integer) userId, parentId);
@@ -87,7 +87,7 @@ public class CategoryServiceImpl implements ICategoryService {
         //登录校验部分
         Boolean hasToken = redisClient.hasKey(token);
         if(hasToken == false){
-            AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
         }
 
         int result = categoryMapper.deleteByPrimaryKey(id);
@@ -108,7 +108,7 @@ public class CategoryServiceImpl implements ICategoryService {
         //登录校验部分
         Boolean hasToken = redisClient.hasKey(token);
         if(hasToken == false){
-            AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
         }
 
         //获得userId
@@ -123,12 +123,29 @@ public class CategoryServiceImpl implements ICategoryService {
 
     /**
      * 上传文件
-     * @param file
+     * @param file  需要上传的文件
+     * @param token 用户的token用作登录
      * @return
      * @throws IOException
      */
     @Override
-    public AxiosResponse upload(MultipartFile file) throws IOException {
+    public AxiosResponse upload(MultipartFile file,String token) throws IOException {
+        //登录校验部分
+        Boolean hasToken = redisClient.hasKey(token);
+        if(hasToken == false){
+           return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+        }
+        //获得userId
+        Object userId = redisClient.get(token, "userId");
+        //以用户id作为依据自增1
+        redisClient.incr(userId);
+        Object o = redisClient.get(userId);
+        int downloadNum =(int) o;
+        //大于5次需要提升权限
+        if (downloadNum > 5){
+            return AxiosResponse.error(CustomExprotion.NO_AUTHENTICATION);
+        }
+
         int type = 6;
         InputStream inputStream=file.getInputStream();
 
@@ -162,7 +179,7 @@ public class CategoryServiceImpl implements ICategoryService {
         }
 
         Category category=new Category();
-        category.setUserId(1);
+        category.setUserId((Integer) userId);
         category.setParentId(0);
         category.setName(prefix);
         category.setType(type);
@@ -179,10 +196,56 @@ public class CategoryServiceImpl implements ICategoryService {
         return AxiosResponse.success("上传成功");
     }
     @Override
-    public InputStream download(String fileName){
+    public AxiosResponse download(String fileName,String token) throws IOException {
+        //登录校验部分
+        Boolean hasToken = redisClient.hasKey(token);
+        if(hasToken == false){
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+        }
+
+        HttpServletResponse response= null;
+        response.setContentType("application/octet-stream");
+        response.setHeader("content-disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8"));
+        //下载文件
         InputStream inputStream = ftpUtil.downFile(fileName);
-        return inputStream;
+        int len = 0;
+        byte[] buffer = new byte[1024];
+        OutputStream out=response.getOutputStream();
+        while((len=inputStream.read(buffer))>0){
+            out.write(buffer,0,len);
+        }
+        inputStream.close();
+        out.close();
+
+        return AxiosResponse.success();
     }
+
+    @Override
+    public AxiosResponse test(String token){
+        //登录校验部分
+        Boolean hasToken = redisClient.hasKey(token);
+        if(hasToken == false){
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+        }
+        //获得userId
+        Object userId = redisClient.get(token, "userId");
+        //以用户id作为依据自增1
+        Long incr = redisClient.incr(userId);
+        redisClient.expireAt(userId, TimeUnit.SECONDS);
+
+//        Date date=new Date();
+//        date.setTime(60000);
+//        boolean b = redisClient.expireAt(userId, date);
+
+        //大于5次需要提升权限
+        if (incr > 5){
+            return AxiosResponse.error(CustomExprotion.NO_AUTHENTICATION);
+        }
+
+        return AxiosResponse.success();
+    }
+
+
 
 
 

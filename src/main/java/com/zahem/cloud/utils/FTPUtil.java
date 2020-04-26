@@ -85,7 +85,6 @@ public class FTPUtil {
                     if (name.equals(fileName)) {
                         result = ftpClient.retrieveFileStream(ff.getName());
                         flag = true;
-                        log.info("cdlm");
                     }
                 }
                 if (!flag) {
