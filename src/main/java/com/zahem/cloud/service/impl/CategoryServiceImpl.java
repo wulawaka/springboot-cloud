@@ -138,7 +138,15 @@ public class CategoryServiceImpl implements ICategoryService {
         //获得userId
         Object userId = redisClient.get(token, "userId");
         //以用户id作为依据自增1
-        redisClient.incr(userId);
+        Long incr = redisClient.incr(userId);
+        //检测是否设置过期时间
+        Long ttl = redisClient.ttl(userId);
+        //-1表示未设置过期时间
+        if (ttl == -1){
+            //设置过期时间，24小时
+            redisClient.setExpire(userId, 60000 ,TimeUnit.MILLISECONDS);
+        }
+        //获取当前用户的上传次数
         Object o = redisClient.get(userId);
         int downloadNum =(int) o;
         //大于5次需要提升权限
@@ -146,6 +154,7 @@ public class CategoryServiceImpl implements ICategoryService {
             return AxiosResponse.error(CustomExprotion.NO_AUTHENTICATION);
         }
 
+        //文件类型6，表示其他文件
         int type = 6;
         InputStream inputStream=file.getInputStream();
 
@@ -231,7 +240,13 @@ public class CategoryServiceImpl implements ICategoryService {
         Object userId = redisClient.get(token, "userId");
         //以用户id作为依据自增1
         Long incr = redisClient.incr(userId);
-        redisClient.expireAt(userId, TimeUnit.SECONDS);
+        Long ttl = redisClient.ttl(userId);
+        if (ttl == -1){
+            redisClient.setExpire(userId, 60000 ,TimeUnit.MILLISECONDS);
+            log.info(String.valueOf(ttl));
+            System.out.println(ttl);
+        }
+
 
 //        Date date=new Date();
 //        date.setTime(60000);
