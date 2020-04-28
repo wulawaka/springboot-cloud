@@ -8,12 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URLEncoder;
 
 @RestController
 public class CategoryController {
@@ -59,22 +54,25 @@ public class CategoryController {
 
     /**
      * 下载文件
-     * @param fileName
-     * @param token
+     * 根据前端传回来的文件ID进行下载
+     * @param token 验证用户
+     * @param Id    文件Id
      * @return
      * @throws IOException
      */
     @RequestMapping("/download")
-    public AxiosResponse download(String fileName, String token) throws IOException {
-        AxiosResponse download = categoryService.download(fileName, token);
+    public AxiosResponse download(String token,int Id) throws IOException {
+        AxiosResponse download = categoryService.download(token,Id);
         return AxiosResponse.success();
     }
 
-    @RequestMapping("/test")
-    public AxiosResponse test(String token){
-        AxiosResponse axiosResponse=categoryService.test(token);
-        return axiosResponse;
-    }
+//    @RequestMapping("/alipay")
+//    public AxiosResponse test(){
+//        AliPayConfig.aliPayTest();
+//        return AxiosResponse.success();
+//    }
+
+
 
 
 }

@@ -204,14 +204,30 @@ public class CategoryServiceImpl implements ICategoryService {
         }
         return AxiosResponse.success("上传成功");
     }
+
+    /**
+     * 下载文件
+     * @param token 用户校验数据
+     * @param Id    文件Id
+     * @return
+     * @throws IOException
+     */
     @Override
-    public AxiosResponse download(String fileName,String token) throws IOException {
+    public AxiosResponse download(String token,int Id) throws IOException {
         //登录校验部分
         Boolean hasToken = redisClient.hasKey(token);
         if(hasToken == false){
             return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
         }
-
+        Object userId = redisClient.get("userId");
+        //根据用户id和文件Id查出文件名称
+        String fileName = categoryMapper.selectByUserIdAndId((Integer) userId, Id);
+        //根据文件名称查出是否存在
+        int result = categoryMapper.selectByFileName(fileName);
+        if (result == 0){
+            return AxiosResponse.error("文件不存在");
+        }
+        //下载部分
         HttpServletResponse response= null;
         response.setContentType("application/octet-stream");
         response.setHeader("content-disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8"));
@@ -229,36 +245,7 @@ public class CategoryServiceImpl implements ICategoryService {
         return AxiosResponse.success();
     }
 
-    @Override
-    public AxiosResponse test(String token){
-        //登录校验部分
-        Boolean hasToken = redisClient.hasKey(token);
-        if(hasToken == false){
-            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
-        }
-        //获得userId
-        Object userId = redisClient.get(token, "userId");
-        //以用户id作为依据自增1
-        Long incr = redisClient.incr(userId);
-        Long ttl = redisClient.ttl(userId);
-        if (ttl == -1){
-            redisClient.setExpire(userId, 60000 ,TimeUnit.MILLISECONDS);
-            log.info(String.valueOf(ttl));
-            System.out.println(ttl);
-        }
 
-
-//        Date date=new Date();
-//        date.setTime(60000);
-//        boolean b = redisClient.expireAt(userId, date);
-
-        //大于5次需要提升权限
-        if (incr > 5){
-            return AxiosResponse.error(CustomExprotion.NO_AUTHENTICATION);
-        }
-
-        return AxiosResponse.success();
-    }
 
 
 

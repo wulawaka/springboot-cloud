@@ -13,6 +13,5 @@ public interface ICategoryService {
     public AxiosResponse delete(String token,int id);
     public AxiosResponse remove(String token,int id);
     public AxiosResponse upload(MultipartFile file,String token) throws IOException;
-    public AxiosResponse download(String fileName,String token) throws IOException;
-    public AxiosResponse test(String token);
+    public AxiosResponse download(String token,int Id) throws IOException;
 }

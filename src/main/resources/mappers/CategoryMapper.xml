@@ -147,6 +147,13 @@
     select * from category where user_id=#{userId} and parent_id=#{parentId}
   </select>
 
+  <select id="selectByUserIdAndId" parameterType="int" resultType="String">
+    select name from category where user_id=#{userId} and id=#{Id}
+  </select>
+  <select id="selectByFileName" parameterType="String" resultType="int">
+    select count(1) from category where Name=#{Name}
+  </select>
+
 
 
 </mapper>

@@ -23,4 +23,8 @@ public interface CategoryMapper {
     Category selectAllByUserIdAndParentId(@Param("userId")int userId,@Param("parentId")int parentId);
 
     int insertFilesById(@Param("userId")int userId,@Param("Name")String Name,@Param("type")int type,@Param("parentId")int parentId);
+
+    String selectByUserIdAndId(@Param("userId")int userId,@Param("Id")int id);
+
+    int selectByFileName(String Name);
 }
