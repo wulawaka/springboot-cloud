@@ -33,15 +33,12 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Order" useGeneratedKeys="true">
     insert into order (order_no, user_id, shipping_id, 
-      payment, payment_type, postage, 
-      `status`, payment_time, send_time, 
-      end_time, close_time, create_time, 
-      update_time)
+      payment, payment_time, end_time, close_time)
     values (#{orderNo,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{shippingId,jdbcType=INTEGER}, 
-      #{payment,jdbcType=DECIMAL}, #{paymentType,jdbcType=INTEGER}, #{postage,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{paymentTime,jdbcType=TIMESTAMP}, #{sendTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP}, #{closeTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{payment,jdbcType=DECIMAL}, 1, 0,
+      20, #{paymentTime,jdbcType=TIMESTAMP}, now(),
+      now(), now(), now(),
+      now())
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zahem.cloud.pojo.Order" useGeneratedKeys="true">
     insert into order

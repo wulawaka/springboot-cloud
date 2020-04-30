@@ -1,7 +1,9 @@
 package com.zahem.cloud.dao;
 
 import com.zahem.cloud.pojo.Product;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface ProductMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,5 @@ public interface ProductMapper {
     int updateByPrimaryKeyWithBLOBs(Product record);
 
     int updateByPrimaryKey(Product record);
+    Product selectProduct();
 }

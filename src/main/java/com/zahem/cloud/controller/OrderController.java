@@ -17,8 +17,8 @@ public class OrderController {
     private IOrderService iOrderService;
 
     @RequestMapping(value = "alipay/toPay", method = RequestMethod.GET)
-    public String alipay(Integer amount,int number) throws AlipayApiException {
-        String s = iOrderService.aliPay(amount, number);
+    public String alipay(Integer amount,int number,String token) throws AlipayApiException {
+        String s = iOrderService.aliPay(amount, number,token);
         return s;
     }
 

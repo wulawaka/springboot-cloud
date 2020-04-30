@@ -7,8 +7,9 @@ import com.zahem.cloud.config.AxiosResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
 
 public interface IOrderService {
     public String aliPay( Integer amount, int number,String token) throws AlipayApiException;
-    public String notify(HttpServletRequest request, HttpServletResponse response);
+    public String notify(HttpServletRequest request, HttpServletResponse response) throws ParseException;
 }
