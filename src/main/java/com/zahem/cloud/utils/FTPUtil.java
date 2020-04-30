@@ -6,6 +6,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -15,14 +16,26 @@ import java.io.InputStream;
 import java.net.SocketException;
 import java.util.List;
 
+/**
+ * FTP工具类
+ * upload   上传
+ * downloadFile 下载
+ * downFile 调用上面
+ * @author zahem
+ */
 @Slf4j
 @Component
 public class FTPUtil {
-    private static final String ftpIp="192.168.2.101";
-    private static final String ftpUser = "wanfei";
-    private static final String ftpPasswd="123456";
-    private static final int ftpPort=21;
-    private static final String basepath="/ftpfile";
+    @Value("${ftp.ip}")
+    private String ftpIp;
+    @Value("${ftp.username}")
+    private String ftpUser;
+    @Value("${ftp.password}")
+    private String ftpPasswd;
+    @Value("${ftp.port}")
+    private int ftpPort;
+    @Value("${ftp.filepath}")
+    private String basepath;
 
     public boolean upload(String fileName, InputStream input){
         boolean success = false;
