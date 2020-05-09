@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.beans.Transient;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -56,6 +57,13 @@ public class UserServiceImpl implements IUserService {
         redisClient.set(random,"userName",user.getName());
         redisClient.set(random,"userEmail",user.getEmail());
         redisClient.set(random,"userRoles",userRoles);
+        //检测是否设置过期时间
+        Long ttl = redisClient.ttl(random);
+        //-1表示未设置过期时间
+        if (ttl == -1){
+            //设置过期时间，24小时
+            redisClient.setExpire(random, 86400000 , TimeUnit.MILLISECONDS);
+        }
 
         return AxiosResponse.success(random);
     }

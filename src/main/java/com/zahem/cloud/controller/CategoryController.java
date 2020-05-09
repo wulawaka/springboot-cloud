@@ -2,7 +2,9 @@ package com.zahem.cloud.controller;
 
 import com.zahem.cloud.config.AxiosResponse;
 import com.zahem.cloud.service.ICategoryService;
+import javafx.scene.chart.Axis;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
+@CrossOrigin
 public class CategoryController {
 
     @Autowired
@@ -18,7 +21,7 @@ public class CategoryController {
 
     //查看所有文件
     @RequestMapping("/all")
-    public AxiosResponse selectAll(String token, @RequestParam(defaultValue = "0",value = "parentId")int parentId){
+    public AxiosResponse selectAll(@RequestParam("token") String token, @RequestParam(defaultValue = "0",value = "parentId")int parentId){
         AxiosResponse axiosResponse = categoryService.selectAll(token, parentId);
         return axiosResponse;
     }
@@ -45,6 +48,20 @@ public class CategoryController {
         AxiosResponse axiosResponse=categoryService.remove(token, id);
         return axiosResponse;
     }
+
+    //查询标记废弃的内容
+    @RequestMapping("/rubbishall")
+    public AxiosResponse rubbishAll(String token){
+        AxiosResponse axiosResponse = categoryService.selectByStatus(token);
+        return axiosResponse;
+    }
+    //根据类型查询文件
+    @RequestMapping("/type")
+    public AxiosResponse FileType(String token,int type){
+        AxiosResponse axiosResponse = categoryService.selectByType(token, type);
+        return axiosResponse;
+    }
+
     //上传
     @RequestMapping("/upload")
     public AxiosResponse upload(@RequestParam("file") MultipartFile file,String token) throws IOException {
@@ -66,11 +83,7 @@ public class CategoryController {
         return AxiosResponse.success();
     }
 
-//    @RequestMapping("/alipay")
-//    public AxiosResponse test(){
-//        AliPayConfig.aliPayTest();
-//        return AxiosResponse.success();
-//    }
+
 
 
 

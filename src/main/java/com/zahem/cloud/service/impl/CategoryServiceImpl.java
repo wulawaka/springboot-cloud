@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -72,7 +73,7 @@ public class CategoryServiceImpl implements ICategoryService {
             return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
         }
         Object userId = redisClient.get(token, "userId");
-        Category category = categoryMapper.selectAllByUserIdAndParentId((Integer) userId, parentId);
+        List<Category> category = categoryMapper.selectAllByUserIdAndParentId((Integer) userId, parentId);
         return AxiosResponse.success(category);
     }
 
@@ -122,6 +123,45 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     /**
+     * 获取所有标记废弃的文件
+     * @param token
+     * @return
+     */
+    @Override
+    public AxiosResponse selectByStatus(String token){
+        //登录校验部分
+        Boolean hasToken = redisClient.hasKey(token);
+        if(hasToken == false){
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+        }
+        //获得userId
+        Object userId = redisClient.get(token, "userId");
+
+        List<Category> categories = categoryMapper.selectByStatus((Integer) userId);
+        return AxiosResponse.success(categories);
+    }
+
+    /**
+     * 根据type来获取该类型，文件有那些
+     * @param token 验证
+     * @param type  文件类型
+     * @return
+     */
+    @Override
+    public AxiosResponse selectByType(String token,int type){
+        //登录校验部分
+        Boolean hasToken = redisClient.hasKey(token);
+        if(hasToken == false){
+            return AxiosResponse.error(CustomExprotion.USER_NOT_LOGIN);
+        }
+        //获得userId
+        Object userId = redisClient.get(token, "userId");
+
+        List<Category> categories = categoryMapper.selectFilesType((Integer) userId, type);
+        return AxiosResponse.success();
+    }
+
+    /**
      * 上传文件
      * @param file  需要上传的文件
      * @param token 用户的token用作登录
@@ -144,7 +184,7 @@ public class CategoryServiceImpl implements ICategoryService {
         //-1表示未设置过期时间
         if (ttl == -1){
             //设置过期时间，24小时
-            redisClient.setExpire(userId, 60000 ,TimeUnit.MILLISECONDS);
+            redisClient.setExpire(userId, 86400000 ,TimeUnit.MILLISECONDS);
         }
         //获取当前用户的上传次数
         Object o = redisClient.get(userId);
@@ -244,6 +284,7 @@ public class CategoryServiceImpl implements ICategoryService {
 
         return AxiosResponse.success();
     }
+
 
 
 

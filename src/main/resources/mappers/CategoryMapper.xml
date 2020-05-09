@@ -154,6 +154,14 @@
     select count(1) from category where Name=#{Name}
   </select>
 
+  <select id="selectByStatus" parameterType="com.zahem.cloud.pojo.Category" resultType="com.zahem.cloud.pojo.Category">
+    select id,name,type,update_time from category where status=2 and user_id=#{userId}
+  </select>
+
+  <select id="selectFilesType" resultMap="BaseResultMap" parameterType="int">
+    select id,name,create_time from category where status=1 and user_id=#{userId} and type=#{type}
+  </select>
+
 
 
 </mapper>

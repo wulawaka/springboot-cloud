@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
 
 @RestController
 @Slf4j
+
+@CrossOrigin
 public class OrderController {
     @Autowired
     private IOrderService iOrderService;
@@ -23,7 +26,7 @@ public class OrderController {
     }
 
     @RequestMapping("alipay/notifyurl")
-    public String notifyAlipay(HttpServletResponse response, HttpServletRequest request) throws IOException, AlipayApiException {
+    public String notifyAlipay(HttpServletResponse response, HttpServletRequest request) throws IOException, AlipayApiException, ParseException {
         String notify = iOrderService.notify(request, response);
         return notify;
     }
