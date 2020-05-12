@@ -1,20 +1,15 @@
 package com.zahem.cloud.utils;
 
-import com.zahem.cloud.config.AxiosResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
-import java.util.List;
 
 /**
  * FTP工具类
@@ -26,15 +21,15 @@ import java.util.List;
 @Slf4j
 @Component
 public class FTPUtil {
-    @Value("${ftp.ip}")
+    @Value("{ftp.ip}")
     private String ftpIp;
-    @Value("${ftp.username}")
+    @Value("{ftp.username}")
     private String ftpUser;
-    @Value("${ftp.password}")
+    @Value("{ftp.password")
     private String ftpPasswd;
-    @Value("${ftp.port}")
+    @Value("{ftp.port}")
     private int ftpPort;
-    @Value("${ftp.filepath}")
+    @Value("{ftp.filepath}")
     private String basepath;
 
     public boolean upload(String fileName, InputStream input){
